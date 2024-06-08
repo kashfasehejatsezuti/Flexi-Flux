@@ -15,7 +15,7 @@ function App() {
       const currentLine = lines[i].split(",");
       //Loop  go each column of csv data and map it corresponding heading.
       for (let j = 0; j < headers.length; j++) {
-        obj[headers[j].trim()] = currentLine[j].trim();
+        obj[headers[j]?.trim()] = currentLine[j]?.trim();
       }
       result.push(obj);
     }
@@ -35,14 +35,100 @@ function App() {
     };
     render.readAsText(file);
   };
+
+  const handleCopy = () => {
+    const jsonString = JSON.stringify(jsonData, null, 2);
+    navigator.clipboard
+      .writeText(jsonString)
+      .then(() => {
+        console.table(jsonString);
+      })
+      .catch((err) => {
+        console.error("Failed to copy: ", err);
+      });
+  };
+  const renderTable = (data) => {
+    if (!data || data.length === 0) return null;
+    const headers = Object.keys(data[0]);
+
+    return (
+      <table style={{ borderCollapse: "collapse", width: "100%" }}>
+        <thead>
+          <tr>
+            {headers.map((header) => (
+              <th
+                key={header}
+                style={{ border: "3px solid green", padding: "8px" }}
+              >
+                {header}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {data.map((row, index) => (
+            <tr key={index}>
+              {headers.map((header) => (
+                <td
+                  key={header}
+                  style={{ border: "2px solid green", padding: "8px" }}
+                >
+                  {row[header]}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    );
+  };
   return (
     <>
       <div>
         <input type="file" accept=".csv" onChange={handelCSVInputChange} />
         {jsonData ? (
-          <div style={{ fontSize: "1.5rem" }}>
-            {<pre>{JSON.stringify(jsonData, null, 4)}</pre>}
-          </div>
+          <>
+            <div>
+              <button
+                style={{
+                  fontSize: "1.5rem",
+                  textAlign: "center",
+                  color: "#4ea28e",
+                  margin: "5rem",
+                  justifyItems: "center",
+                  backgroundColor: "white",
+                }}
+                onClick={handleCopy}
+              >
+                Copy
+              </button>
+            </div>
+            <div
+              style={{
+                fontSize: "1.5rem",
+                textAlign: "center",
+                display: "flex",
+                height: "auto",
+                width: "auto",
+                whiteSpace: "nowrap",
+                overFlow: "hidden",
+                textOverflow: "ellipsis",
+                backgroundColor: "#4ea28e",
+                color: "white",
+              }}
+            >
+              {<pre>{JSON.stringify(jsonData, null, 2)}</pre>}
+              <div
+                style={{
+                  color: "#4ea28e",
+                  backgroundColor: "white",
+                  marginRight: "4rem",
+                }}
+              >
+                {renderTable(jsonData)}
+              </div>
+            </div>
+          </>
         ) : (
           <div style={{ fontSize: "1.5rem" }}>
             <br></br> Please choose a csv file.
