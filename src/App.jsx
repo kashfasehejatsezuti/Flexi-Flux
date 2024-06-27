@@ -15,7 +15,7 @@ function App() {
       const currentLine = lines[i].split(",");
       //Loop  go each column of csv data and map it corresponding heading.
       for (let j = 0; j < headers.length; j++) {
-        obj[headers[j]?.trim()] = currentLine[j]?.trim();
+        obj[headers[j].trim()] = currentLine[j] ? currentLine[j].trim() : "";
       }
       result.push(obj);
     }
@@ -31,7 +31,7 @@ function App() {
 
       const jsonData = convertCsvToJson(csvData);
       setJsonData(jsonData);
-      // console.log(jsonData);
+      console.log(jsonData);
     };
     render.readAsText(file);
   };
@@ -47,6 +47,20 @@ function App() {
         console.error("Failed to copy: ", err);
       });
   };
+
+  const downloadJsonFile = () => {
+    const jsonString = JSON.stringify(jsonData, null, 2);
+    const jsonFile = new Blob([jsonString], { type: "application/json" });
+    const fileUrl = URL.createObjectURL(jsonFile);
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    console.log(fileUrl);
+    link.download = "data.json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const renderTable = (data) => {
     if (!data || data.length === 0) return null;
     const headers = Object.keys(data[0]);
@@ -108,26 +122,40 @@ function App() {
                 fontSize: "1.5rem",
                 textAlign: "center",
                 display: "flex",
-                height: "auto",
                 width: "auto",
-                whiteSpace: "nowrap",
-                overFlow: "hidden",
-                textOverflow: "ellipsis",
+                height: "35rem",
+                justifyContent: "center",
+                overflowX: "hidden",
+                overflowY: "auto",
                 backgroundColor: "#4ea28e",
                 color: "white",
               }}
             >
               {<pre>{JSON.stringify(jsonData, null, 2)}</pre>}
-              <div
-                style={{
-                  color: "#4ea28e",
-                  backgroundColor: "white",
-                  marginRight: "4rem",
-                }}
-              >
-                {renderTable(jsonData)}
-              </div>
             </div>
+            <div
+              style={{
+                color: "#4ea28e",
+                backgroundColor: "white",
+                marginRight: "4rem",
+              }}
+            >
+              {renderTable(jsonData)}
+            </div>
+
+            <button
+              style={{
+                fontSize: "1.5rem",
+                textAlign: "center",
+                color: "#4ea28e",
+                margin: "5rem",
+                justifyItems: "center",
+                backgroundColor: "white",
+              }}
+              onClick={downloadJsonFile}
+            >
+              Download
+            </button>
           </>
         ) : (
           <div style={{ fontSize: "1.5rem" }}>
