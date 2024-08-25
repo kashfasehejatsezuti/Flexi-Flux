@@ -138,6 +138,7 @@ function App() {
                 color: "#4ea28e",
                 backgroundColor: "white",
                 marginRight: "4rem",
+                marginTop: "4rem",
               }}
             >
               {renderTable(jsonData)}
