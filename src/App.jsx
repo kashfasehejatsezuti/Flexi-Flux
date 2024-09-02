@@ -2,11 +2,12 @@
 import "./App.css";
 import { useState } from "react";
 import Logo from "../public/vite.png";
+import Swal from "sweetalert2";
 
 function App() {
   const [jsonData, setJsonData] = useState(null);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [isDisabledDownload, setIsDisabledDownload] = useState(false);
+  // const [isDisabledDownload, setIsDisabledDownload] = useState(false);
 
   const convertCsvToJson = (csvData) => {
     const lines = csvData.split("\n");
@@ -54,9 +55,9 @@ function App() {
       });
   };
 
-  const downloadJsonFile = (e) => {
-    e.target.innerText = "Done";
-    setIsDisabledDownload(true);
+  const downloadJsonFile = () => {
+    // e.target.innerText = "Done";
+    // setIsDisabledDownload(true);
     const jsonString = JSON.stringify(jsonData, null, 2);
     const jsonFile = new Blob([jsonString], { type: "application/json" });
     const fileUrl = URL.createObjectURL(jsonFile);
@@ -67,6 +68,14 @@ function App() {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+
+    Swal.fire({
+      icon: "success",
+      title: "Download Started",
+      text: "Your JSON file is being downloaded!",
+      timer: 2000,
+      showConfirmButton: false,
+    });
   };
 
   const renderTable = (data) => {
@@ -198,7 +207,7 @@ function App() {
                 border: "2px solid #2f5f98",
               }}
               onClick={downloadJsonFile}
-              disabled={isDisabledDownload}
+              // disabled={isDisabledDownload}
             >
               Download The File
             </button>
